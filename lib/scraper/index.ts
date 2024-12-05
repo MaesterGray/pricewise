@@ -56,17 +56,19 @@ if (listPriceIndex !== -1) {
            currency: currency||'$' ,
            image:imageUrls[0],
            title,
-           currentPrice:Number(currentPrice),
-           originalPrice:Number(originalPrice),
+           currentPrice: Number(currentPrice) || Number(originalPrice),
+           originalPrice: Number(originalPrice) || Number(currentPrice),        
            priceHistory:[],
            discountRate:Number(discountRate),
            category:'category',
            reviewCount:100,
            stars:4.5,
            isOutOfStock:outOfStock,
-           description
+           description,      lowestPrice: Number(currentPrice) || Number(originalPrice),
+           highestPrice: Number(originalPrice) || Number(currentPrice),
+           averagePrice: Number(currentPrice) || Number(originalPrice),
         }
-        console.log(data)
+        return data
     } catch (error:any) {
         throw new Error(`Failed to scrape product:${error.message}`)
     }
