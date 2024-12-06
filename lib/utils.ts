@@ -9,7 +9,7 @@ const Notification = {
 
 const THRESHOLD_PERCENTAGE = 40;
 
-export function extractPrice(...elements:any){
+export function extractPrice(...elements){
     for (const element of elements){
         const priceText = element.text().trim()
 
@@ -18,7 +18,7 @@ export function extractPrice(...elements:any){
     return ''
 }
 
-export function extractDescription($: any) {
+export function extractDescription($) {
     // these are possible elements holding description of the product
     const selectors = [
       ".a-unordered-list .a-list-item",
@@ -30,7 +30,7 @@ export function extractDescription($: any) {
       const elements = $(selector);
       if (elements.length > 0) {
         const textContent = elements
-          .map((_: any, element: any) => $(element).text().trim())
+          .map((_, element) => $(element).text().trim())
           .get()
           .join("\n");
         return textContent;
@@ -41,7 +41,7 @@ export function extractDescription($: any) {
     return "";
   }
   
-export function extractCurrency(element:any){
+export function extractCurrency(element){
     const currencyText = element.text().trim().slice(0,1);
     return currencyText ? currencyText : '';
 }

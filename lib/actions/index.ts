@@ -6,8 +6,8 @@ import Product from "../models/prooduct.model";
 import { getLowestPrice,getHighestPrice,getAveragePrice } from "../utils";
 import { revalidatePath } from "next/cache";
 import { User } from "@/types";
-import { generateEmailBody } from "../resend";
-import { sendEmail } from "../resend";
+// import { generateEmailBody } from "../resend";
+// import { sendEmail } from "../resend";
 export async function scrapeAndStoreProduct(productUrl:string){
     if (!productUrl) return;
 
@@ -24,7 +24,7 @@ const existingPriceHistory = Array.isArray(existingProduct.priceHistory)
         ? existingProduct.priceHistory
         : [];
 
-      const updatedPriceHistory: any = [
+      const updatedPriceHistory = [
         ...existingPriceHistory,
         { price: scrapedProduct.currentPrice },
       ];
@@ -41,7 +41,7 @@ const existingPriceHistory = Array.isArray(existingProduct.priceHistory)
             {upsert:true,new:true}
         )
         revalidatePath(`/products/${newProduct._id}`)
-    }catch(error:any){
+    }catch(error){
         throw new Error(`Failed to create/update :${error.message}`)
 
     }
@@ -73,9 +73,9 @@ export async function addUserEmailToProduct(productId: string, userEmail: string
   
         await product.save();
   
-        const emailContent = await generateEmailBody(product, "WELCOME");
+        // const emailContent = await generateEmailBody(product, "WELCOME");
   
-        await sendEmail(emailContent, [userEmail]);
+        // await sendEmail(emailContent, [userEmail]);
         console.log('i finished')
 
       }

@@ -1,7 +1,22 @@
 import axios from 'axios'
-import { extractCurrency, extractDescription, extractPrice } from '../utils'
+import { extractCurrency, extractDescription } from '../utils'
 import * as cheerio from 'cheerio'
 
+function extractOriginalPrice (input:string){
+    const listPriceIndex = input.indexOf("List Price: $");
+
+// If "List Price:" is found in the string
+if (listPriceIndex !== -1) {
+// Extract the substring starting after "List Price:"
+const listPricePart = input.substring(listPriceIndex + "List Price: $".length).trim();
+
+// Find the first space or end of the string after the price
+const price = listPricePart.split(" ")[0];
+return price
+} else {
+return null
+}
+}
 export async function scrapeAmazonProduct(url:string){
     if(!url){
         return
@@ -28,21 +43,7 @@ export async function scrapeAmazonProduct(url:string){
         const title = $('#productTitle').text().trim()
         const currentPrice = $('.a-offscreen').text().trim().split('$')[1]
         
-        function extractOriginalPrice (input:string){
-            const listPriceIndex = input.indexOf("List Price: $");
-
-// If "List Price:" is found in the string
-if (listPriceIndex !== -1) {
-    // Extract the substring starting after "List Price:"
-    const listPricePart = input.substring(listPriceIndex + "List Price: $".length).trim();
-
-    // Find the first space or end of the string after the price
-    const price = listPricePart.split(" ")[0];
-    return price
-} else {
-    return null
-}
-        }
+        
         const originalPrice = extractOriginalPrice($('.aok-offscreen').text().trim())
         const outOfStock = $('#availability span').text().trim().toLowerCase() ==='currently unavailable'
         const images = $('#imgBlkFront').attr('data-a-dynamic-image')||
@@ -69,7 +70,7 @@ if (listPriceIndex !== -1) {
            averagePrice: Number(currentPrice) || Number(originalPrice),
         }
         return data
-    } catch (error:any) {
+    } catch (error) {
         throw new Error(`Failed to scrape product:${error.message}`)
     }
 }
