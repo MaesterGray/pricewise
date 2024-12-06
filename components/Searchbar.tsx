@@ -35,7 +35,7 @@ if(!isValidLink) return alert('Please provide a valid Amazon Lnk')
 try {
     setIsLoading(true)
 
-    const product = await scrapeAndStoreProduct(searchPrompt)
+     await scrapeAndStoreProduct(searchPrompt)
 } catch (error) {
     console.log(error)
 }finally{
