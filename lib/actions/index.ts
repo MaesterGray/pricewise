@@ -7,7 +7,7 @@ import { getLowestPrice,getHighestPrice,getAveragePrice } from "../utils";
 import { revalidatePath } from "next/cache";
 import { User } from "@/types";
 // import { generateEmailBody } from "../resend";
-// import { sendEmail } from "../resend";
+import { sendEmail } from "../resend";
 export async function scrapeAndStoreProduct(productUrl:string){
     if (!productUrl) return;
 
@@ -68,15 +68,12 @@ export async function addUserEmailToProduct(productId: string, userEmail: string
       const userExists = product.users.some((user: User) => user.email === userEmail);
       console.log(userExists,product.users)
       if(userExists) {
-        console.log('i started')
         // product.users.push({ email: userEmail });
   
-        await product.save();
+        //await product.save();
   
-        // const emailContent = await generateEmailBody(product, "WELCOME");
   
-        // await sendEmail(emailContent, [userEmail]);
-        console.log('i finished')
+         await sendEmail('WELCOME',{title:product.title,url:product.url},[userEmail]);
 
       }
     } catch (error) {
