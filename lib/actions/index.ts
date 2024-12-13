@@ -5,9 +5,8 @@ import { connectToDb } from "../mongoose";
 import Product from "../models/prooduct.model";
 import { getLowestPrice,getHighestPrice,getAveragePrice } from "../utils";
 import { revalidatePath } from "next/cache";
-// import { User } from "@/types";
-// // import { generateEmailBody } from "../resend";
-// import { sendEmail } from "../resend";
+import { User } from "@/types";
+import { sendEmail } from "../mail";
 export async function scrapeAndStoreProduct(productUrl:string){
     if (!productUrl) return;
 
@@ -88,3 +87,26 @@ try{
       console.log(error);
     }
   }
+
+  export async function addUserEmailToProduct(productId: string, userEmail: string) {
+    try {
+      connectToDb()
+      const product = await Product.findById(productId);
+  
+      if(!product) return;
+  
+      const userExists = product.users.some((user: User) => user.email === userEmail);
+  
+      if(!userExists) {
+        product.users.push({ email: userEmail });
+  
+        await product.save();
+      await sendEmail('WELCOME',{title:product.title,url:product.url},[userEmail]);
+        
+  
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  

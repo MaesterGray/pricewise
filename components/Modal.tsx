@@ -2,41 +2,13 @@
 
 import { FormEvent, Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import Product from '@/lib/models/prooduct.model'
-import { sendEmail } from '@/lib/resend'
 import Image from 'next/image'
-import { connectToDb } from '@/lib/mongoose'
-import { User } from '@/types'
-// import { addUserEmailToProduct } from '@/lib/actions'
+import { addUserEmailToProduct } from '@/lib/actions'
 
 interface Props {
   productId: string
 }
 
-export async function addUserEmailToProduct(productId: string, userEmail: string) {
-  try {
-    connectToDb()
-
-    console.log('no options yet')
-    const product = await Product.findById(productId);
-
-    if(!product) return;
-
-    const userExists = product.users.some((user: User) => user.email === userEmail);
-    console.log(userExists,product.users)
-    if(userExists) {
-      // product.users.push({ email: userEmail });
-
-      //await product.save();
-
-
-       await sendEmail('WELCOME',{title:product.title,url:product.url},[userEmail]);
-
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 const Modal = ({ productId }: Props) => {
   const [isOpen, setIsOpen] = useState(true)
@@ -44,6 +16,7 @@ const Modal = ({ productId }: Props) => {
   const [email, setEmail] = useState('');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
     setIsSubmitting(true);
 
