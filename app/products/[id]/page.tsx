@@ -161,7 +161,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
             Product Description
           </h3>
 
-          <div className="flex flex-col gap-4">
+          <div className="prose lg:prose-xl max-w-none">
             {product?.description?.split('\n')}
           </div>
         </div>

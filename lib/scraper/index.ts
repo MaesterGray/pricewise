@@ -1,22 +1,22 @@
 import axios from 'axios'
-import { extractCurrency, extractDescription } from '../utils'
+import { extractCurrency, extractDescription,extractFirstNumber,removeDollarSign } from '../utils'
 import * as cheerio from 'cheerio'
 
-function extractOriginalPrice (input:string){
-    const listPriceIndex = input.indexOf("List Price: $");
+// function extractOriginalPrice (input:string){
+//     const listPriceIndex = input.indexOf("List Price: $");
 
-// If "List Price:" is found in the string
-if (listPriceIndex !== -1) {
-// Extract the substring starting after "List Price:"
-const listPricePart = input.substring(listPriceIndex + "List Price: $".length).trim();
+// // If "List Price:" is found in the string
+// if (listPriceIndex !== -1) {
+// // Extract the substring starting after "List Price:"
+// const listPricePart = input.substring(listPriceIndex + "List Price: $".length).trim();
 
-// Find the first space or end of the string after the price
-const price = listPricePart.split(" ")[0];
-return price
-} else {
-return null
-}
-}
+// // Find the first space or end of the string after the price
+// const price = listPricePart.split(" ")[0];
+// return price
+// } else {
+// return null
+// }
+// }
 export async function scrapeAmazonProduct(url:string){
     if(!url){
         return
@@ -41,10 +41,15 @@ export async function scrapeAmazonProduct(url:string){
         const $ = cheerio.load(response.data)
 
         const title = $('#productTitle').text().trim()
-        const currentPrice = $('.a-offscreen').text().trim().split('$')[1]
-        
-        
-        const originalPrice = extractOriginalPrice($('.aok-offscreen').text().trim())
+        const currentPriceWhole = extractFirstNumber($('.a-price-whole').text().trim())
+        const currentPriceFraction = $('.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay  .a-price-fraction').text().trim().slice(0,2)
+        console.log(currentPriceFraction)
+        const currentPrice = `${currentPriceWhole}.${currentPriceFraction}`
+        let originalPrice = removeDollarSign($('.a-price.a-text-price > .a-offscreen').text())
+        console.log(originalPrice)
+        if(!originalPrice){
+            originalPrice = currentPrice
+        }
         const outOfStock = $('#availability span').text().trim().toLowerCase() ==='currently unavailable'
         const images = $('#imgBlkFront').attr('data-a-dynamic-image')||
         $('#landingImage').attr('data-a-dynamic-image')||'{}'

@@ -102,3 +102,22 @@ export const formatNumber = (num: number = 0) => {
     maximumFractionDigits: 0,
   });
 };
+
+export function extractFirstNumber(input: string): string | null {
+  const regex = /(\d+)\./;
+  const match = input.match(regex);
+  
+  return match ? match[1] : null;
+}
+export function removeDollarSign(price: string): string {
+    if (!price) return '';
+    // Match first occurrence of $number.number pattern
+    const regex = /\$(\d+\.\d+)/;
+    const match = price.match(regex);
+    return match ? match[1] : '';
+}
+
+// Example:
+// removeDollarSign('$99.99$199.99') // returns '99.99'
+// Example usage:
+// const cleanPrice = removeDollarSign('$99.99'); // returns '99.99'
